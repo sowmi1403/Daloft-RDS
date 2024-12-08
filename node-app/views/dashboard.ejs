@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daloft-Dashboard</title>
+    <link rel="icon" href="/images/logo.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpy1RK5zz0bndIGgg2sf4wIpJPhgkf5mA&libraries=places" onerror="console.error('Google Maps API failed to load');"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <ul class="navigation">
+                <li class="nav-item"><a href="/services"><img src="/images/services.png" alt="Services"></a><a href="/services">Services</a></li>
+                <li class="nav-item"><a href="/teams"><img src="/images/teams.png" alt="Teams"></a><a href="/teams">Teams</a></li>
+                <li class="nav-item"><a href="/planner"><img src="/images/planner.png" alt="Planner"></a><a href="/planner">Planner</a></li>
+                <li class="nav-item active"><a href="/dashboard"><img src="/images/dashboard.png" alt="Dashboard"></a><a href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a href="/settings"><img src="/images/settings.png" alt="Settings"></a><a href="/settings">Settings</a></li>
+                <li class="nav-item"><a href="/help"><img src="/images/help.png" alt="Help"></a><a href="/help">Help</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <header>
+                <div class="header-left">
+                    <img src="/images/logo.png" alt="Logo of Daloft" class="header-logo">
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-container">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <input type="text" name="" placeholder="Search">
+                    </div>
+                    <div class="message"><a href="/message"><img src="/images/message.png" alt="Inbox"></a><a href="/message">Inbox</a></div>
+                    <div class="profile-container">
+                        <span class="employee-name">Employee Name</span>
+                        <div class="profile-img-container"><img src="/images/profile.png" alt="Profile" class="profile-img"></div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="dashboard">
+                <div class="map-and-right-box">
+                    <div id="map" class="map"></div>
+                </div>
+                <div class="bottom-box1">
+                    <table class="parameters-table">
+                        <tr>
+                            <td>Latitude:</td><td id="latitude"></td>
+                            <td>A</td><td id="A"></td>
+                            <td>C</td><td id="C"></td>
+                            <td>E</td><td id="E"></td>
+                        </tr>
+                        <tr>
+                            <td>Longitude:</td><td id="longitude"></td>
+                            <td>B</td><td id="B"></td>
+                            <td>D</td><td id="D"></td>
+                            <td>F</td><td id="F"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="bottom-box2">
+                    <table class="parameters-table2">
+                        <tr>
+                            <td><img src="/images/camera2.png" alt="error loading"></td><td>0.0</td>
+                            <td><img src="/images/signal.png" alt="error loading"></td><td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td><img src="/images/camera1.png" alt="error loading"></td><td>0.0</td>
+                            <td><img src="/images/battery.png" alt="error loading"></td><td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td><img src="/images/compass.png" alt="error loading"></td><td>0.0</td>
+                            <td><img src="/images/camera2.png" alt="error loading"></td><td>0.0</td>
+                        </tr>
+                        <tr>
+                            <td><img src="/images/battery.png" alt="error loading"></td><td>0.0</td>
+                            <td><img src="/images/signal.png" alt="error loading"></td><td>0.0</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="right-box">
+                    <h2>Key Parameters:</h2>
+                    <ul>
+                        <li>Latitude:</li>
+                        <li>Longitude:</li>
+                        <li>Speed:</li>
+                        <li>Altitude:</li>
+                        <li>Strength:</li>
+                        <li>Payload:</li>
+                        <li>Duration:</li>
+                        <li>Feed Status:</li>
+                        <li>Mode:</li>
+                    </ul>
+                </div>        
+            </section>
+        </div>
+    </div>
+
+    <script>
+        let map;
+        let polylinePath = [];
+        let polyline;
+        let marker = null;
+        const maxPoints = 7;
+        const fetchInterval = 1000;
+        const userId = <%= userData.user_id %>; // Use dynamic user ID
+
+        const droneIcon = {
+            url: '/images/drone.png',
+            scaledSize: new google.maps.Size(50, 50),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(25, 25)
+        };
+
+        function initMap() {
+            const initialLocation = { lat: 20.5937, lng: 78.9629 }; // Center the map to default location
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 18,
+                center: initialLocation,
+            });
+
+            polyline = new google.maps.Polyline({
+                path: polylinePath,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                map: map
+            });
+        }
+
+        function fetchNextCoordinate() {
+            fetch(`/api/coordinates?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.latitude && data.longitude) {
+                        const latLng = new google.maps.LatLng(parseFloat(data.latitude), parseFloat(data.longitude));
+                        polylinePath.push(latLng);
+
+                        if (polylinePath.length > maxPoints) {
+                            polylinePath.shift();
+                        }
+
+                        polyline.setPath(polylinePath);
+
+                        if (marker) {
+                            marker.setMap(null);
+                        }
+
+                        marker = new google.maps.Marker({
+                            position: latLng,
+                            map: map,
+                            icon: droneIcon,
+                            title: `Lat: ${data.latitude}, Lng: ${data.longitude}`
+                        });
+
+                        map.panTo(latLng);
+
+                        // Update latitude and longitude in bottom-box1
+                        document.getElementById('latitude').textContent = data.latitude;
+                        document.getElementById('longitude').textContent = data.longitude;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching coordinates:', error);
+                });
+        }
+
+        function fetchUserData() {
+            fetch(`/api/dashboard-data?user_id=${userId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update the user data fields in the bottom box
+                    document.getElementById('A').textContent = data.A || '';
+                    document.getElementById('B').textContent = data.B || '';
+                    document.getElementById('C').textContent = data.C || '';
+                    document.getElementById('D').textContent = data.D || '';
+                    document.getElementById('E').textContent = data.E || '';
+                    document.getElementById('F').textContent = data.F || '';
+                })
+                .catch(error => console.error('Error fetching user data:', error));
+        }
+
+        function startFetchingData() {
+            fetchNextCoordinate(); // Initial fetch
+            fetchUserData(); // Initial user data fetch
+            setInterval(() => {
+                fetchNextCoordinate();
+                fetchUserData(); // Fetch user data every 2 seconds
+            }, fetchInterval); // Fetch every 2 seconds
+        }
+
+        window.onload = function () {
+            initMap();
+            startFetchingData();
+        };
+    </script>
+</body>
+</html>

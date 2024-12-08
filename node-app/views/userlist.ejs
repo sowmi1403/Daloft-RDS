@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Directories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        width: 100%;
+        height:100%;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        background-color: black;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 5px;
+    }
+
+    .left-header h1 {
+        margin: 0;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+    }
+
+    .left-header h1 i {
+        margin-right: 10px;
+    }
+
+    .right-header a {
+        color: white;
+        margin-left: 20px;
+        font-size: 24px;
+        text-decoration: none;
+    }
+
+    .right-header a:hover {
+        color: #ccc;
+    }
+
+    .right-header i {
+        cursor: pointer;
+    }
+
+
+    .user-directories {
+        margin-top: 20px;
+    }
+
+    .user-directories h2 {
+        margin-bottom: 20px;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .all-users, .add-user {
+        background-color: #e0e0e0;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+
+    .all-users:hover,
+    .add-user:hover {
+        background-color: #ccc; /* Change background on hover */
+    }
+
+    .search-user {
+        width: 200px;
+        height: 35px;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        padding:  8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+
+    .search-user > i {
+        font-size: 18px;
+        color: #333;
+        margin-right: 8px; /* Adjust the space between the icon and input */
+    }
+
+    /* Search input styling */
+    .search-user > input {
+        flex: 1;
+        outline: none;
+        border: none;
+        font-size: 14px;
+        padding: 5px 0;
+        height: 100%;
+        width: 160px;
+    }
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .user-table th, .user-table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .user-table th {
+        background-color: #f0f0f0;
+    }
+
+    .user-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .category-form {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .category-form select {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        display: block; /* Makes the dropdown full-width */
+        margin: 10px auto 20px auto; /* Adds top margin */
+    }
+
+    .category-form button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .category-form button:hover {
+        background-color: #0056b3;
+    }
+
+    .form-button {
+        margin-top: 15px; /* Adds space between dropdown and submit button */
+    }
+
+    .form-button button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .form-button button:hover {
+        background-color: #0056b3;
+    }
+
+    /* Search container styling */
+    .search-container {
+        width: 200px;
+        height: 35px;
+        background-color: white;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+    }
+
+    /* Search icon styling */
+    .search-container > i {
+        font-size: 16px;
+        color: #333;
+    }
+
+    /* Search input styling */
+    .search-container > input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        padding: 5px 0;
+        height: 100%;
+    }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="left-header">
+                <h1><i class="fa fa-users" aria-hidden="true"></i> Userlist</h1>
+            </div>
+            <div class="right-header">
+                <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                <a href="help.html"><i class="fa fa-question-circle" aria-hidden="true"></i></a>
+            </div>
+        </div>        
+        <div class="user-directories">
+            <h2>User directories</h2>
+            <div class="controls">
+                <button class="all-users" onclick="location.reload();">All Users</button>
+                <div class="search-user">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <label for="userSearch" class="sr-only">Search User</label>
+                    <input type="text" id="userSearch" name="searchUser" placeholder="Search User">
+                </div>
+                <button class="add-user">Add User</button>
+            </div>
+            
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>User Id</th>
+                        <th>Name</th>
+                        <th>Last login</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="user-row" data-user="Dinesh"> 
+                        <td>1</td>
+                        <td>Dinesh</td>
+                        <td>2 hours ago</td>
+                        <td>Chennai</td>
+                    </tr>
+                    <tr class="category-row" id="Dinesh-category" style="display:none;">
+                        <td colspan="4">
+                            <form class="category-form" action="/dashboard" method="GET">
+                                <input type="hidden" name="user_id" value="1"> <!-- Replace 1 with dynamic user_id -->
+                                <label for="category">Select Category</label>
+                                <select id="category" name="category">
+                                    <option value="data-values">Data value</option>
+                                    <option value="wave-points">Wave points</option>
+                                </select>
+                                <div class="form-button">
+                                    <button type="submit">Submit</button>
+                                </div>
+                            </form>
+                            
+                        </td>
+                    </tr>                    
+                    <tr class="user-row" data-user="Ankoji">
+                        <td>2</td>
+                        <td>Ankoji</td>
+                        <td>3 hours ago</td>
+                        <td>Chennai</td>
+                    </tr>
+                    <tr class="category-row" id="Ankoji-category" style="display:none;">
+                        <td colspan="4">
+                            <form class="category-form" action="dashboard" method="GET">
+                                <input type="hidden" name="user_id" value="2"> <!-- Replace 1 with dynamic user_id -->
+                                <label for="category">Select Category</label>
+                                <select id="category" name="category">
+                                    <option value="data-values">Data value</option>
+                                    <option value="wave-points">Wave points</option>
+                                </select>
+                                <div class="form-button">
+                                    <button type="submit">Submit</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr class="user-row" data-user="Narayanan">
+                        <td>3</td>
+                        <td>Narayanan</td>
+                        <td>1 hour ago</td>
+                        <td>Bangalore</td>
+                    </tr>
+                    <tr class="category-row" id="Narayanan-category" style="display:none;">
+                        <td colspan="4">
+                            <form class="category-form" action="dashboard" method="GET">
+                                <input type="hidden" name="user_id" value="3"> <!-- Replace 1 with dynamic user_id -->
+                                <label for="category">Select Category</label>
+                                <select id="category" name="category">
+                                    <option value="data-values">Data value</option>
+                                    <option value="wave-points">Wave points</option>
+                                </select>
+                                <div class="form-button">
+                                    <button type="submit">Submit</button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+       // JavaScript for searching usernames
+        const searchInput = document.getElementById('userSearch');
+        const searchIcon = document.querySelector('.fa-search');
+        const userRows = document.querySelectorAll('.user-row');
+
+        // Function to perform the search
+        function searchUsers() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            let found = false;
+
+            userRows.forEach(row => {
+                const userName = row.getAttribute('data-user').toLowerCase();
+                if (userName.startsWith(searchValue)) {
+                    row.style.display = 'table-row';
+                    found = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Trigger an alert if no user is found
+            if (!found) {
+                alert('No user found');
+            }
+        }
+
+        // Event listener for pressing Enter key
+        searchInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchUsers();
+            }
+        });
+
+        // Event listener for clicking the search icon
+        searchIcon.addEventListener('click', searchUsers);
+
+        // Toggle the category row when a user is clicked
+                document.querySelectorAll('.user-row').forEach(userRow => {
+            userRow.addEventListener('click', function() {
+                const user = this.getAttribute('data-user'); // Get the data-user attribute
+                const userId = this.querySelector('td:first-child').innerText; // Get the user ID from the first column
+                
+                // Ensure all category rows are hidden
+                document.querySelectorAll('.category-row').forEach(row => row.style.display = 'none');
+                
+                // Find the corresponding category row and form
+                const categoryRow = document.getElementById(`${user}-category`);
+                if (categoryRow) {
+                    const categoryForm = categoryRow.querySelector('.category-form');
+                    if (categoryForm) {
+                        // Dynamically set the user ID in the hidden input field
+                        categoryForm.querySelector('input[name="user_id"]').value = userId;
+
+                        // Display the category row
+                        categoryRow.style.display = 'table-row';
+                    }
+                } else {
+                    console.error(`Category row not found for user: ${user}`);
+                }
+            });
+        });
+
+
+        // Handle form submission and redirect to the dashboard with the selected category
+        function submitCategory(user) {
+            const selectedCategory = document.querySelector(`#${user}-category select`).value;
+            
+            // Optionally, store the selected category in sessionStorage or localStorage
+            sessionStorage.setItem('selectedCategory', selectedCategory);
+            
+            // Redirect to the dashboard
+            window.location.href = '/dashboard';
+            
+            // Fetch data dynamically based on the selected category using an API call
+            fetchData(selectedCategory);
+        }
+
+        // Fetch data dynamically after redirecting to the dashboard
+        function fetchData(category) {
+            fetch(`/api/dashboard-data?category=${category}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the data fetched, such as updating the dashboard view
+                    console.log('Dashboard Data:', data);
+                    
+                    // For example, display values A-F and lat/long here
+                    // You can pass the data to the dashboard's table and map
+                })
+                .catch(error => console.error('Error fetching dashboard data:', error));
+        }
+    </script>
+
+</body>
+</html>
+
